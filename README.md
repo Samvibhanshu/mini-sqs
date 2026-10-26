@@ -119,15 +119,6 @@ For the HTTP layer, 6 more: checksums over the wrong bytes, no long-poll cap, a 
 ignored, FIFO sends without a deduplication id accepted, `WaitTimeSeconds` ignored, and one bad handle failing a whole
 delete batch. All 6 are caught.
 
-## Deliberate simplifications
-
-- In memory, single process: a restart loses every message. Real SQS replicates every message across several servers and availability zones before acknowledging a send.
-- No authentication: request signatures are ignored, so the server binds to 127.0.0.1 by default.
-- A stale or already-used receipt handle is an error here (`ReceiptHandleIsInvalid`); real SQS is more forgiving
-  with some of these.
-- A FIFO receive returns at most one message per group. SQS can return several messages of one group in a single batch.
-- "Approximate" counts are exact here, because there is one copy of the data.
-
 ## Layout
 
 ```
