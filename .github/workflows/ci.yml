@@ -13,3 +13,12 @@ jobs:
           distribution: temurin
           java-version: "21"
       - run: bash build.sh        # javac -Xlint:all, then every test; needs nothing but a JDK
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: The official AWS SDK (boto3) against mini-sqs
+        run: |
+          pip install boto3
+          java -cp out/main dev.samridhi.sqs.server.Main 9324 &
+          for i in $(seq 1 30); do curl -s -o /dev/null http://127.0.0.1:9324 && break; sleep 0.5; done
+          python compat/boto3_check.py http://127.0.0.1:9324
